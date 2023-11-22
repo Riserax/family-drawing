@@ -31,40 +31,45 @@
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const database = getDatabase(app);
-  
 
     // Handle form -----------------------------------------------------------------------
     let drawingForm = document.getElementById("drawing-form");
     drawingForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      
-      let personListSelect = document.getElementById("person-list");
-      console.log('Selected value: ' + personListSelect.value);
-      console.log('Selected text: ' + personListSelect.options[personListSelect.selectedIndex].text);
 
       // Getting person list
       const personsRef = ref(database, 'persons');
       onValue(personsRef, (snapshot) => {
         const personList = snapshot.val();
-        console.log('Persons data:');
-        console.table(personList);
+        // console.log('Persons data:');
+        // console.table(personList);
 
         // Getting drawing list
         const drawingsRef = ref(database, 'drawings/2023');
         onValue(drawingsRef, (snapshot) => {
           const drawingList = snapshot.val();
-          console.log('Drawings data:');
-          console.table(drawingList);
+          // console.log('Drawings data:');
+          // console.table(drawingList);
 
           // Getting drawn list
           let drawnPersons = [];
+          let personWasAlreadyDrawing = false;
           for (let i = 0; i < drawingList.length; i++) {
             let indexOfComma = drawingList[i].indexOf(">");
+
+            let drawingPerson = drawingList[i].substring(0, indexOfComma);
+            // console.log("drawingPerson: " + drawingPerson);
+            let personListSelect = document.getElementById("person-list");
+            if (drawingPerson == personListSelect.value) {
+              personWasAlreadyDrawing = true;
+              alert("Ta osoba już losowała!");
+            }
+            
             drawnPersons[i] = drawingList[i].substring(indexOfComma + 1);
-            console.log("drawnPerson[i]: " + drawnPersons[i]);
+            // console.log("drawnPerson[i]: " + drawnPersons[i]);
           }
-          console.log("Drawns:");
-          console.table(drawnPersons);
+          // console.log("Drawns:");
+          // console.table(drawnPersons);
 
           // Getting free persons list
           let freePersons = [];
@@ -77,12 +82,18 @@
               }
             }
           }
-          console.log("Free persons:");
-          console.table(freePersons);
+          // console.log("Free persons:");
+          // console.table(freePersons);
 
+          // Getting randomly drawn person
           let randomNumber = Math.floor((Math.random() * freePersons.length - 1) + 1);
           let randomlyDrawnPerson = freePersons[randomNumber];
           console.log("randomNumber: " + randomNumber + ", randomlyDrawnPerson: " + randomlyDrawnPerson);
+
+          // TODO zapis do bazy
+          if (!personWasAlreadyDrawing) {
+            
+          }
         });
       });
 
