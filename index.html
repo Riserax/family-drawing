@@ -31,14 +31,7 @@
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const database = getDatabase(app);
-
-    const personsRef = ref(database, 'persons');
-
-    onValue(personsRef, (snapshot) => {
-      const data = snapshot.val();
-      console.log('Persons data:');
-      console.table(data);
-    });
+  
 
     // Handle form -----------------------------------------------------------------------
     let drawingForm = document.getElementById("drawing-form");
@@ -49,20 +42,47 @@
       console.log('Selected value: ' + personListSelect.value);
       console.log('Selected text: ' + personListSelect.options[personListSelect.selectedIndex].text);
 
-
+      // Getting person list
+      const personsRef = ref(database, 'persons');
       onValue(personsRef, (snapshot) => {
         const personList = snapshot.val();
         console.log('Persons data:');
         console.table(personList);
 
+        // Getting drawing list
         const drawingsRef = ref(database, 'drawings/2023');
         onValue(drawingsRef, (snapshot) => {
           const drawingList = snapshot.val();
           console.log('Drawings data:');
           console.table(drawingList);
-          for (int i = 0; i < data.length; i++) {
-            console.log('Is magda in arr? ' + data.includes("magda,kamil"));
+
+          // Getting drawn list
+          let drawnPersons = [];
+          for (let i = 0; i < drawingList.length; i++) {
+            let indexOfComma = drawingList[i].indexOf(">");
+            drawnPersons[i] = drawingList[i].substring(indexOfComma + 1);
+            console.log("drawnPerson[i]: " + drawnPersons[i]);
           }
+          console.log("Drawns:");
+          console.table(drawnPersons);
+
+          // Getting free persons list
+          let freePersons = [];
+          let freePersonsCount = 0;
+          for (let j = 0; j < personList.length; j++) {
+            for (let k = 0; k < drawnPersons.length; k++) {
+              if (personList[j] != drawnPersons[k]) {
+                freePersons[freePersonsCount] = personList[j];
+                freePersonsCount++;
+              }
+            }
+          }
+          console.log("Free persons:");
+          console.table(freePersons);
+
+          let randomNumber = Math.floor((Math.random() * freePersons.length - 1) + 1);
+          let randomlyDrawnPerson = freePersons[randomNumber];
+          console.log("randomNumber: " + randomNumber + ", randomlyDrawnPerson: " + randomlyDrawnPerson);
         });
       });
 
