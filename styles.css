@@ -1,0 +1,29 @@
+body {
+	background-color: #34A65F;
+}
+
+h2 {
+	margin-bottom: 40px;
+}
+
+#container {
+    width: 80%;
+	max-width: 970px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5%;
+	padding: 50px 5%;
+	background-color: white;
+	border-radius: 10px;
+	text-align: center;
+}
+
+button {
+	margin-top: 20px;
+}
+
+.btn.btn-primary {
+	font-weight: 500;
+	background-color: #CC231E;
+	border-color: #F5624D;
+}

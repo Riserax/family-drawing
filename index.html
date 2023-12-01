@@ -6,6 +6,7 @@
     <title>Świąteczne losowanie</title>
     <link rel="icon" type="image/x-icon" href="./santa-claus.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 <body>
   <script type="module">
@@ -45,28 +46,34 @@
           get(child(databaseRef, 'drawings/2023/calki')).then((snapshot) => {
             if (snapshot.exists()) {
               const drawingList = snapshot.val();
-
-              // Get drawn person list ---------------------------------------------------
+              
               const selectedPerson = document.getElementById("person-list").value;
-              let personHasAlreadyDrawn = false;
-              let drawnPersons = [];
-              for (let i = 0; i < drawingList.length; i++) {
-                const indexOfComma = drawingList[i].indexOf(">");
-                const drawnPerson = drawingList[i].substring(0, indexOfComma);
-                
-                if (drawnPerson == selectedPerson) {
-                  personHasAlreadyDrawn = true;
-                  alert("Ta osoba już losowała!");
+              if (selectedPerson == '') {
+                alert("Wybierz osobę z listy");
+              } else {
+                // Get drawn person list -------------------------------------------------
+                let personHasAlreadyDrawn = false;
+                let drawnPersons = [];
+                for (let i = 0; i < drawingList.length; i++) {
+                  const indexOfComma = drawingList[i].indexOf(">");
+                  const drawnPerson = drawingList[i].substring(0, indexOfComma);
+                  
+                  if (drawnPerson == selectedPerson) {
+                    personHasAlreadyDrawn = true;
+                    if (!alert("Ta osoba już losowała!")) {
+                      window.location.reload();
+                    }
+                  }
+                  
+                  drawnPersons[i] = drawingList[i].substring(indexOfComma + 1);
                 }
-                
-                drawnPersons[i] = drawingList[i].substring(indexOfComma + 1);
-              }
-              addDrawingPersonToDrawnList(drawnPersons);
+                addDrawingPersonToDrawnList(drawnPersons);
 
-              // Perform drawing ---------------------------------------------------------
-              if (!personHasAlreadyDrawn) {
-                let randomlyDrawnPerson = getRandomlyDrawnPerson(personList, drawnPersons);
-                saveDrawing(randomlyDrawnPerson, drawingList);
+                // Perform drawing ---------------------------------------------------------
+                if (!personHasAlreadyDrawn) {
+                  let randomlyDrawnPerson = getRandomlyDrawnPerson(personList, drawnPersons);
+                  saveDrawing(randomlyDrawnPerson, drawingList);
+                }
               }
             } else {
               console.log("No drawings available");
@@ -129,28 +136,30 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 
-  <h2>Świąteczne losowanie</h2>
+  <div id="container">
+    <h2>Świąteczne losowanie</h2>
 
-  <form action="" id="drawing-form">
-    <h4>Kto losuje?</h4>
+    <form action="" id="drawing-form">
+      <h5>Kto losuje?</h5>
 
-    <select class="form-select" id="person-list">
-      <option value=""></option>
-      <option value="Babcia Nina">Babcia Nina</option>
-      <option value="Babcia Terenia">Babcia Terenia</option>
-      <option value="Beata">Beata</option>
-      <option value="Grzesiek">Grzesiek</option>
-      <option value="Jola">Jola</option>
-      <option value="Kamil">Kamil</option>
-      <option value="Kasia">Kasia</option>
-      <option value="Krzysiek">Krzysiek</option>
-      <option value="Magda">Magda</option>
-      <option value="Michał">Michał</option>
-      <option value="Robert">Robert</option>
-    </select>
+      <select class="form-select" id="person-list">
+        <option value=""></option>
+        <option value="Babcia Nina">Babcia Nina</option>
+        <option value="Babcia Terenia">Babcia Terenia</option>
+        <option value="Beata">Beata</option>
+        <option value="Grzesiek">Grzesiek</option>
+        <option value="Jola">Jola</option>
+        <option value="Kamil">Kamil</option>
+        <option value="Kasia">Kasia</option>
+        <option value="Krzysiek">Krzysiek</option>
+        <option value="Magda">Magda</option>
+        <option value="Michał">Michał</option>
+        <option value="Robert">Robert</option>
+      </select>
 
-    <button type="submit" class="btn btn-primary">Losuj</button>
-  </form>
+      <button type="submit" class="btn btn-primary">Losuj</button>
+    </form>
+  </div>
 
 </body>
 </html>
