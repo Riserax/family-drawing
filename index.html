@@ -101,7 +101,6 @@
       const freePersons = getFreePersons(personList, drawnPersons);
       let randomNumber = Math.floor(Math.random() * freePersons.length);
       let randomlyDrawnPerson = freePersons[randomNumber];
-      console.log("randomNumber: " + randomNumber + ", randomlyDrawnPerson: " + randomlyDrawnPerson);
       return randomlyDrawnPerson;
     }
 
@@ -113,8 +112,6 @@
           freePersons[freePersonsCount++] = personList[j];
         }
       }
-      console.log("Free persons:");
-      console.table(freePersons);
       return freePersons;
     }
 
