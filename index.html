@@ -53,25 +53,30 @@
               } else {
                 // Get drawn person list -------------------------------------------------
                 let personHasAlreadyDrawn = false;
-                let drawnPersons = [];
+                let personWhoHasDrawnList = [];
+                let personWhoHasBeenDrawnList = [];
                 for (let i = 0; i < drawingList.length; i++) {
                   const indexOfComma = drawingList[i].indexOf(">");
-                  const drawnPerson = drawingList[i].substring(0, indexOfComma);
-                  
-                  if (drawnPerson == selectedPerson) {
+                  const personWhoHasDrawn = drawingList[i].substring(0, indexOfComma);
+
+                  if (personWhoHasDrawn == selectedPerson) {
                     personHasAlreadyDrawn = true;
                     if (!alert("Ta osoba już losowała!")) {
                       window.location.reload();
                     }
                   }
                   
-                  drawnPersons[i] = drawingList[i].substring(indexOfComma + 1);
+                  personWhoHasDrawnList[i] = personWhoHasDrawn;
+                  personWhoHasBeenDrawnList[i] = drawingList[i].substring(indexOfComma + 1);
                 }
-                addDrawingPersonToDrawnList(drawnPersons);
+                console.log("Już losowali:");
+                console.table(personWhoHasDrawnList);
+
+                addDrawingPersonToDrawnList(personWhoHasBeenDrawnList);
 
                 // Perform drawing ---------------------------------------------------------
                 if (!personHasAlreadyDrawn) {
-                  let randomlyDrawnPerson = getRandomlyDrawnPerson(personList, drawnPersons);
+                  let randomlyDrawnPerson = getRandomlyDrawnPerson(personList, personWhoHasBeenDrawnList);
                   saveDrawing(randomlyDrawnPerson, drawingList);
                 }
               }
