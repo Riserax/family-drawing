@@ -43,7 +43,7 @@
           const personList = snapshot.val();
 
           // Get drawing list ------------------------------------------------------------
-          get(child(databaseRef, 'drawings/2023/calki')).then((snapshot) => {
+          get(child(databaseRef, 'drawings/2024/calki')).then((snapshot) => {
             if (snapshot.exists()) {
               const drawingList = snapshot.val();
               
@@ -103,13 +103,13 @@
     }
 
     let getRandomlyDrawnPerson = (personList, drawnPersons) => {
-      const freePersons = getFreePersons(personList, drawnPersons);
+      const freePersons = getAvailablePersons(personList, drawnPersons);
       let randomNumber = Math.floor(Math.random() * freePersons.length);
       let randomlyDrawnPerson = freePersons[randomNumber];
       return randomlyDrawnPerson;
     }
 
-    let getFreePersons = (personList, drawnPersons) => {
+    let getAvailablePersons = (personList, drawnPersons) => {
       let freePersons = [];
       let freePersonsCount = 0;
       for (let j = 0; j < personList.length; j++) {
@@ -123,7 +123,7 @@
     let saveDrawing = (randomlyDrawnPerson, drawingList) => {
       const selectedPerson = document.getElementById("person-list").value;
       const drawResult = `${selectedPerson}>${randomlyDrawnPerson}`;
-      set(ref(database, `drawings/2023/calki/${drawingList.length}`), drawResult);
+      set(ref(database, `drawings/2024/calki/${drawingList.length}`), drawResult);
       showDrawingAlert(randomlyDrawnPerson);
     }
 
@@ -158,6 +158,14 @@
         <option value="Michał">Michał</option>
         <option value="Robert">Robert</option>
       </select>
+
+      <p>
+        <em>
+          Po kliknięciu "Losuj" pojawi się <strong>okienko</strong>, w którym <strong>wyświetli się wylosowana osoba</strong>.
+          <br>
+          <strong>Zapamiętaj</strong> ją lub <strong>zapisz</strong>, bo nie będzie można jej wyświetlić drugi raz!
+        </em>
+      </p>
 
       <button type="submit" class="btn btn-primary">Losuj</button>
     </form>
