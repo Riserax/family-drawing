@@ -31,6 +31,45 @@
     const database = getDatabase(app);
     const databaseRef = ref(database);
 
+    // Populate a person list from database -------------------------------------------------
+    const populatePersonOptions = () => {
+      const selectElement = document.getElementById("person-list");
+      if (!selectElement) return;
+      // Keep only the first placeholder option
+      while (selectElement.options.length > 1) {
+        selectElement.remove(1);
+      }
+
+      get(child(databaseRef, 'persons/calki')).then((snapshot) => {
+        if (!snapshot.exists()) {
+          console.log("No persons available to populate select");
+          return;
+        }
+
+        const data = snapshot.val();
+        let people = [];
+        if (Array.isArray(data)) {
+          people = data.filter(Boolean);
+        }
+
+        people.forEach(name => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          selectElement.appendChild(opt);
+        });
+      }).catch((error) => {
+        console.error(error);
+      });
+    };
+
+    // Ensure options are populated on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', populatePersonOptions);
+    } else {
+      populatePersonOptions();
+    }
+
     // Handle form -----------------------------------------------------------------------
     const drawingForm = document.getElementById("drawing-form");
     const drawingPath = `drawings/${new Date().getFullYear()}/calki`;
@@ -143,21 +182,8 @@
 
     <form action="" id="drawing-form">
       <h5>Kto losuje?</h5>
-
       <select class="form-select" id="person-list">
         <option value=""></option>
-        <option value="Babcia Nina">Babcia Nina</option>
-        <option value="Babcia Terenia">Babcia Terenia</option>
-        <option value="Beatka">Beatka</option>
-        <option value="Grzesiu">Grzesiu</option>
-        <option value="Jola">Jola</option>
-        <option value="Kamil">Kamil</option>
-        <option value="Kasia">Kasia</option>
-        <option value="Krzysiek">Krzysiek</option>
-        <option value="Magda">Magda</option>
-        <option value="Michał">Michał</option>
-        <option value="Robert">Robert</option>
-        <option value="Zuza">Zuza</option>
       </select>
 
       <p>
