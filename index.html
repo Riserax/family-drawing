@@ -10,9 +10,9 @@
 </head>
 <body>
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-    import { child, get, getDatabase, onValue, ref, set } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
+    import { child, get, getDatabase, onValue, ref, set } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB2jdkHNxzsjFl01ryROP1bKpTINsqEEf0",
@@ -33,6 +33,7 @@
 
     // Handle form -----------------------------------------------------------------------
     const drawingForm = document.getElementById("drawing-form");
+    const drawingPath = `drawings/${new Date().getFullYear()}/calki`;
 
     drawingForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -43,12 +44,12 @@
           const personList = snapshot.val();
 
           // Get drawing list ------------------------------------------------------------
-          get(child(databaseRef, 'drawings/2024/calki')).then((snapshot) => {
+          get(child(databaseRef, drawingPath)).then((snapshot) => {
             if (snapshot.exists()) {
               const drawingList = snapshot.val();
               
               const selectedPerson = document.getElementById("person-list").value;
-              if (selectedPerson == '') {
+              if (selectedPerson === '') {
                 alert("Wybierz osobę z listy");
               } else {
                 // Get drawn person list -------------------------------------------------
@@ -59,7 +60,7 @@
                   const indexOfComma = drawingList[i].indexOf(">");
                   const personWhoHasDrawn = drawingList[i].substring(0, indexOfComma);
 
-                  if (personWhoHasDrawn == selectedPerson) {
+                  if (personWhoHasDrawn === selectedPerson) {
                     personHasAlreadyDrawn = true;
                     if (!alert("Ta osoba już losowała!")) {
                       window.location.reload();
@@ -105,8 +106,7 @@
     let getRandomlyDrawnPerson = (personList, drawnPersons) => {
       const freePersons = getAvailablePersons(personList, drawnPersons);
       let randomNumber = Math.floor(Math.random() * freePersons.length);
-      let randomlyDrawnPerson = freePersons[randomNumber];
-      return randomlyDrawnPerson;
+      return freePersons[randomNumber];
     }
 
     let getAvailablePersons = (personList, drawnPersons) => {
@@ -123,7 +123,7 @@
     let saveDrawing = (randomlyDrawnPerson, drawingList) => {
       const selectedPerson = document.getElementById("person-list").value;
       const drawResult = `${selectedPerson}>${randomlyDrawnPerson}`;
-      set(ref(database, `drawings/2024/calki/${drawingList.length}`), drawResult);
+      set(ref(database, `${drawingPath}/${drawingList.length}`), drawResult);
       showDrawingAlert(randomlyDrawnPerson);
     }
 
@@ -148,8 +148,8 @@
         <option value=""></option>
         <option value="Babcia Nina">Babcia Nina</option>
         <option value="Babcia Terenia">Babcia Terenia</option>
-        <option value="Beata">Beata</option>
-        <option value="Grzesiek">Grzesiek</option>
+        <option value="Beatka">Beatka</option>
+        <option value="Grzesiu">Grzesiu</option>
         <option value="Jola">Jola</option>
         <option value="Kamil">Kamil</option>
         <option value="Kasia">Kasia</option>
@@ -157,6 +157,7 @@
         <option value="Magda">Magda</option>
         <option value="Michał">Michał</option>
         <option value="Robert">Robert</option>
+        <option value="Zuza">Zuza</option>
       </select>
 
       <p>
