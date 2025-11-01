@@ -28,8 +28,9 @@ const populatePersonOptions = () => {
 
   get(child(databaseRef, 'persons/calki')).then((snapshot) => {
     if (!snapshot.exists()) {
-      console.log("No persons available to populate select");
-      return;
+      console.log("No persons available to populate select - creating empty list");
+      return set(ref(database, 'persons/calki'), [])
+        .catch((err) => console.error(err));
     }
 
     const data = snapshot.val();
@@ -70,43 +71,46 @@ drawingForm.addEventListener("submit", (e) => {
 
       // Get drawing list ------------------------------------------------------------
       get(child(databaseRef, drawingPath)).then((snapshot) => {
-        if (snapshot.exists()) {
-          const drawingList = snapshot.val();
-          
-          const selectedPerson = document.getElementById("person-list").value;
-          if (selectedPerson === '') {
-            alert("Wybierz osobę z listy");
-          } else {
-            // Get drawn person list -------------------------------------------------
-            let personHasAlreadyDrawn = false;
-            let personWhoHasDrawnList = [];
-            let personWhoHasBeenDrawnList = [];
-            for (let i = 0; i < drawingList.length; i++) {
-              const indexOfComma = drawingList[i].indexOf(">");
-              const personWhoHasDrawn = drawingList[i].substring(0, indexOfComma);
+        if (!snapshot.exists()) {
+          console.log("No drawings available - creating empty list...");
+          set(ref(database, drawingPath), '')
+              .catch((err) => console.error(err));
+          alert("Coś poszło nie tak... Zagłosuj jeszcze raz.");
+          window.location.reload();
+        }
 
-              if (personWhoHasDrawn === selectedPerson) {
-                personHasAlreadyDrawn = true;
-                alert("Ta osoba już losowała!");
-                window.location.reload();
-              }
-
-              personWhoHasDrawnList[i] = personWhoHasDrawn;
-              personWhoHasBeenDrawnList[i] = drawingList[i].substring(indexOfComma + 1);
-            }
-            console.log("Już losowali:");
-            console.table(personWhoHasDrawnList);
-
-            addDrawingPersonToDrawnList(personWhoHasBeenDrawnList);
-
-            // Perform drawing ---------------------------------------------------------
-            if (!personHasAlreadyDrawn) {
-              let randomlyDrawnPerson = getRandomlyDrawnPerson(personList, personWhoHasBeenDrawnList);
-              saveDrawing(randomlyDrawnPerson, drawingList);
-            }
-          }
+        const selectedPerson = document.getElementById("person-list").value;
+        if (selectedPerson === '') {
+          alert("Wybierz osobę z listy");
         } else {
-          console.log("No drawings available");
+          // Get drawn person list -------------------------------------------------
+          const drawingList = snapshot.val();
+          let personHasAlreadyDrawn = false;
+          let personWhoHasDrawnList = [];
+          let personWhoHasBeenDrawnList = [];
+          for (let i = 0; i < drawingList.length; i++) {
+            const indexOfComma = drawingList[i].indexOf(">");
+            const personWhoHasDrawn = drawingList[i].substring(0, indexOfComma);
+
+            if (personWhoHasDrawn === selectedPerson) {
+              personHasAlreadyDrawn = true;
+              alert("Ta osoba już losowała!");
+              window.location.reload();
+            }
+
+            personWhoHasDrawnList[i] = personWhoHasDrawn;
+            personWhoHasBeenDrawnList[i] = drawingList[i].substring(indexOfComma + 1);
+          }
+          console.log("Już losowali:");
+          console.table(personWhoHasDrawnList);
+
+          addDrawingPersonToDrawnList(personWhoHasBeenDrawnList);
+
+          // Perform drawing ---------------------------------------------------------
+          if (!personHasAlreadyDrawn) {
+            let randomlyDrawnPerson = getRandomlyDrawnPerson(personList, personWhoHasBeenDrawnList);
+            saveDrawing(randomlyDrawnPerson, drawingList);
+          }
         }
       }).catch((error) => {
         console.error(error);
