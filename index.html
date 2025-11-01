@@ -101,11 +101,10 @@
 
                   if (personWhoHasDrawn === selectedPerson) {
                     personHasAlreadyDrawn = true;
-                    if (!alert("Ta osoba już losowała!")) {
-                      window.location.reload();
-                    }
+                    alert("Ta osoba już losowała!");
+                    window.location.reload();
                   }
-                  
+
                   personWhoHasDrawnList[i] = personWhoHasDrawn;
                   personWhoHasBeenDrawnList[i] = drawingList[i].substring(indexOfComma + 1);
                 }
@@ -168,9 +167,8 @@
 
     let showDrawingAlert = (randomlyDrawnPerson) => {
       const drawAlertMessage = `WYLOSOWANA OSOBA:\n\n${randomlyDrawnPerson}\n\nZapamiętaj i nie pokazuj nikomu!`;
-      if (!alert(drawAlertMessage)) {
-        window.location.reload();
-      }
+      alert(drawAlertMessage);
+      window.location.reload();
     }
   </script>
 
